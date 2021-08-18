@@ -41,7 +41,7 @@ public abstract class WXPayConfig {
      * @return
      */
     public int getHttpConnectTimeoutMs() {
-        return 6*1000;
+        return 6 * 1000;
     }
 
     /**
@@ -50,11 +50,12 @@ public abstract class WXPayConfig {
      * @return
      */
     public int getHttpReadTimeoutMs() {
-        return 8*1000;
+        return 8 * 1000;
     }
 
     /**
      * 获取WXPayDomain, 用于多域名容灾自动切换
+     *
      * @return
      */
     public abstract IWXPayDomain getWXPayDomain();

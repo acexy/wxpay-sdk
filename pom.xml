@@ -7,7 +7,7 @@
 
     <groupId>cn.acexy.wxpay</groupId>
     <artifactId>wxpay-sdk</artifactId>
-    <version>3.0.10</version>
+    <version>3.0.11</version>
     <name>wxpay-sdk</name>
 
     <properties>
@@ -51,5 +51,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
