@@ -28,8 +28,7 @@ public class WXPayRequest {
 
     private final WXPayConfig config;
 
-    public WXPayRequest(WXPayConfig config) throws Exception {
-
+    public WXPayRequest(WXPayConfig config) {
         this.config = config;
     }
 
@@ -110,94 +109,27 @@ public class WXPayRequest {
     }
 
 
-    private String request(String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs, boolean useCert, boolean autoReport) throws Exception {
-        Exception exception = null;
-        long elapsedTimeMillis = 0;
-        long startTimestampMs = WXPayUtil.getCurrentTimestampMs();
-        boolean firstHasDnsErr = false;
-        boolean firstHasConnectTimeout = false;
-        boolean firstHasReadTimeout = false;
+    private String request(String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs, boolean useCert) throws Exception {
+        Exception exception;
         IWXPayDomain.DomainInfo domainInfo = config.getWXPayDomain().getDomain(config);
         if (domainInfo == null) {
             throw new Exception("WXPayConfig.getWXPayDomain().getDomain() is empty or null");
         }
         try {
             String result = requestOnce(domainInfo.domain, urlSuffix, uuid, data, connectTimeoutMs, readTimeoutMs, useCert);
-            elapsedTimeMillis = WXPayUtil.getCurrentTimestampMs() - startTimestampMs;
-            config.getWXPayDomain().report(domainInfo.domain, elapsedTimeMillis, null);
-            WXPayReport.getInstance(config).report(
-                    uuid,
-                    elapsedTimeMillis,
-                    domainInfo.domain,
-                    domainInfo.primaryDomain,
-                    connectTimeoutMs,
-                    readTimeoutMs,
-                    firstHasDnsErr,
-                    firstHasConnectTimeout,
-                    firstHasReadTimeout);
             return result;
         } catch (UnknownHostException ex) {  // dns 解析错误，或域名不存在
             exception = ex;
-            firstHasDnsErr = true;
-            elapsedTimeMillis = WXPayUtil.getCurrentTimestampMs() - startTimestampMs;
             WXPayUtil.getLogger().warn("UnknownHostException for domainInfo {}", domainInfo);
-            WXPayReport.getInstance(config).report(
-                    uuid,
-                    elapsedTimeMillis,
-                    domainInfo.domain,
-                    domainInfo.primaryDomain,
-                    connectTimeoutMs,
-                    readTimeoutMs,
-                    firstHasDnsErr,
-                    firstHasConnectTimeout,
-                    firstHasReadTimeout
-            );
         } catch (ConnectTimeoutException ex) {
             exception = ex;
-            firstHasConnectTimeout = true;
-            elapsedTimeMillis = WXPayUtil.getCurrentTimestampMs() - startTimestampMs;
             WXPayUtil.getLogger().warn("connect timeout happened for domainInfo {}", domainInfo);
-            WXPayReport.getInstance(config).report(
-                    uuid,
-                    elapsedTimeMillis,
-                    domainInfo.domain,
-                    domainInfo.primaryDomain,
-                    connectTimeoutMs,
-                    readTimeoutMs,
-                    firstHasDnsErr,
-                    firstHasConnectTimeout,
-                    firstHasReadTimeout
-            );
         } catch (SocketTimeoutException ex) {
             exception = ex;
-            firstHasReadTimeout = true;
-            elapsedTimeMillis = WXPayUtil.getCurrentTimestampMs() - startTimestampMs;
             WXPayUtil.getLogger().warn("timeout happened for domainInfo {}", domainInfo);
-            WXPayReport.getInstance(config).report(
-                    uuid,
-                    elapsedTimeMillis,
-                    domainInfo.domain,
-                    domainInfo.primaryDomain,
-                    connectTimeoutMs,
-                    readTimeoutMs,
-                    firstHasDnsErr,
-                    firstHasConnectTimeout,
-                    firstHasReadTimeout);
         } catch (Exception ex) {
             exception = ex;
-            elapsedTimeMillis = WXPayUtil.getCurrentTimestampMs() - startTimestampMs;
-            WXPayReport.getInstance(config).report(
-                    uuid,
-                    elapsedTimeMillis,
-                    domainInfo.domain,
-                    domainInfo.primaryDomain,
-                    connectTimeoutMs,
-                    readTimeoutMs,
-                    firstHasDnsErr,
-                    firstHasConnectTimeout,
-                    firstHasReadTimeout);
         }
-        config.getWXPayDomain().report(domainInfo.domain, elapsedTimeMillis, exception);
         throw exception;
     }
 
@@ -210,8 +142,8 @@ public class WXPayRequest {
      * @param data
      * @return
      */
-    public String requestWithoutCert(String urlSuffix, String uuid, String data, boolean autoReport) throws Exception {
-        return this.request(urlSuffix, uuid, data, config.getHttpConnectTimeoutMs(), config.getHttpReadTimeoutMs(), false, autoReport);
+    public String requestWithoutCert(String urlSuffix, String uuid, String data) throws Exception {
+        return this.request(urlSuffix, uuid, data, config.getHttpConnectTimeoutMs(), config.getHttpReadTimeoutMs(), false);
     }
 
     /**
@@ -224,8 +156,8 @@ public class WXPayRequest {
      * @param readTimeoutMs
      * @return
      */
-    public String requestWithoutCert(String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs, boolean autoReport) throws Exception {
-        return this.request(urlSuffix, uuid, data, connectTimeoutMs, readTimeoutMs, false, autoReport);
+    public String requestWithoutCert(String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs) throws Exception {
+        return this.request(urlSuffix, uuid, data, connectTimeoutMs, readTimeoutMs, false);
     }
 
     /**
@@ -236,8 +168,8 @@ public class WXPayRequest {
      * @param data
      * @return
      */
-    public String requestWithCert(String urlSuffix, String uuid, String data, boolean autoReport) throws Exception {
-        return this.request(urlSuffix, uuid, data, config.getHttpConnectTimeoutMs(), config.getHttpReadTimeoutMs(), true, autoReport);
+    public String requestWithCert(String urlSuffix, String uuid, String data) throws Exception {
+        return this.request(urlSuffix, uuid, data, config.getHttpConnectTimeoutMs(), config.getHttpReadTimeoutMs(), true);
     }
 
     /**
@@ -250,7 +182,7 @@ public class WXPayRequest {
      * @param readTimeoutMs
      * @return
      */
-    public String requestWithCert(String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs, boolean autoReport) throws Exception {
-        return this.request(urlSuffix, uuid, data, connectTimeoutMs, readTimeoutMs, true, autoReport);
+    public String requestWithCert(String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs) throws Exception {
+        return this.request(urlSuffix, uuid, data, connectTimeoutMs, readTimeoutMs, true);
     }
 }

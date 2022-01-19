@@ -7,8 +7,9 @@
 
     <groupId>cn.acexy.wxpay</groupId>
     <artifactId>wxpay-sdk</artifactId>
-    <version>3.0.11</version>
+    <version>3.0.12</version>
     <name>wxpay-sdk</name>
+
 
     <properties>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
@@ -19,18 +20,21 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
+            <version>4.5.13</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <version>1.7.32</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.21</version>
+            <version>1.7.32</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
